@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=BiliBili弹幕姬
+Exec=/usr/bin/bilibili-danmu.py
+Type=Application
+StartupNotify=false
+StartupWMClass=Code
