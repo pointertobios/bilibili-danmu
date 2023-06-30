@@ -6,6 +6,9 @@ import requests
 import multiprocessing as proc
 import tkinter
 
+# 直播间号码
+room_id = 24357339
+
 
 def damuku(msg):
     tk = tkinter.Tk()
@@ -112,5 +115,5 @@ class BilibiliThread(threading.Thread):
 if __name__ == "__main__":
     posrec = proc.Array('i', [False for _ in range(int(900 / 40))])
     lock = proc.Value('d', False)
-    thr = BilibiliThread(24357339)
+    thr = BilibiliThread(room_id)
     thr.start()
