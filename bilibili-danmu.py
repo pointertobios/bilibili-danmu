@@ -61,10 +61,10 @@ class Danmu():
         }
         # 日志写对象
         self.log_file_write = open(
-            '/home/pointer-to-bios/danmu.log', mode='a', encoding='utf-8')
+            'danmu.log', mode='a', encoding='utf-8')
         # 读取日志
         log_file_read = open(
-            '/home/pointer-to-bios/danmu.log', mode='r', encoding='utf-8')
+            'danmu.log', mode='r', encoding='utf-8')
         self.log = log_file_read.readlines()
 
     def get_danmu(self):
