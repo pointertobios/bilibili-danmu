@@ -55,15 +55,20 @@ class Danmu():
             'visit_id': '',
         }
         # 日志写对象
-        self.log_file_write = open('danmu.log', mode='a', encoding='utf-8')
+        self.log_file_write = open('/home/pointer-to-bios/danmu.log', mode='a', encoding='utf-8')
         # 读取日志
-        log_file_read = open('danmu.log', mode='r', encoding='utf-8')
+        log_file_read = open('/home/pointer-to-bios/danmu.log', mode='r', encoding='utf-8')
         self.log = log_file_read.readlines()
 
     def get_danmu(self):
         # 获取直播间弹幕
-        html = requests.post(
-            url=self.url, headers=self.headers, data=self.data).json()
+        while True:
+            try:
+                html = requests.post(
+                    url=self.url, headers=self.headers, data=self.data).json()
+                break
+            except requests.exceptions.RequestException:
+                continue
         # 解析弹幕列表
         for content in html['data']['room']:
             # 获取昵称
@@ -109,7 +114,7 @@ class BilibiliThread(threading.Thread):
         global running
         while running:
             bilibili(self.room_id)
-            time.sleep(0.1)
+            time.sleep(0.5)
 
 
 if __name__ == "__main__":

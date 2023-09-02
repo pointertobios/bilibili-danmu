@@ -1,0 +1,15 @@
+[Unit]
+Description=bilibili danmu
+After=network-online.target syslog.target nfw.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pointer-to-bios
+ExecStartPre=
+ExecStart=/usr/bin/bilibili-danmu.py
+Restart=always
+RestartSec=0
+
+[Install]
+WantedBy=multi-user.target

@@ -3,8 +3,8 @@
 install:
 	cp bilibili-danmu.py /usr/bin/
 	chmod +x /usr/bin/bilibili-danmu.py
-	cp bilibili-danmu.desktop /usr/share/applications/
+	cp bilidanmu.service /etc/systemd/system/
 
 uninstall:
 	rm /usr/bin/bilibili-danmu.py
-	rm /usr/share/applications/bilibili-danmu.desktop
+	rm /etc/systemd/system/bilidanmu.service
