@@ -10,28 +10,33 @@ import tkinter
 room_id = 24357339
 
 
+MAX_MSGS = 12
+
+
 def damuku(msg):
+    global MAX_MSGS
     tk = tkinter.Tk()
     tk.wm_attributes('-topmost', 1)
     tk.overrideredirect(True)
     lb = tkinter.Label(tk, text=msg, height=1, bd=0, font=('文泉驿微米黑', 12, ''))
     lb.pack()
-    pos = 0
-    # while lock.value == True:
-    #     time.sleep(0.001)
-    # lock.value = True
-    for i in range(len(posrec)):
-        if posrec[i] == False:
-            pos = i
-            posrec[i] = True
-            break
-    # lock.value = False
-    for i in range(tk.winfo_screenwidth(), 0, -1):
-        if tk.winfo_screenwidth() - i == tk.winfo_width():
-            posrec[pos] = False
-        tk.geometry('+{}+{}'.format(i, pos * 40))
+    tk.update()
+    x = tk.winfo_screenwidth()
+    y = tk.winfo_screenheight() - tk.winfo_height()
+    for _ in range(tk.winfo_width()):
+        x -= 1
+        tk.geometry("+{}+{}".format(x, y))
         tk.update()
-        time.sleep(0.00833333333)
+        time.sleep(0.0002)
+    for i in range(MAX_MSGS):
+        while not sigs[i]:
+            pass
+        sigs[i] = False
+        for _ in range(40):
+            y -= 1
+            tk.geometry("+{}+{}".format(x, y))
+            tk.update()
+            time.sleep(0.005)
 
 
 running = True
@@ -55,12 +60,15 @@ class Danmu():
             'visit_id': '',
         }
         # 日志写对象
-        self.log_file_write = open('/home/pointer-to-bios/danmu.log', mode='a', encoding='utf-8')
+        self.log_file_write = open(
+            '/home/pointer-to-bios/danmu.log', mode='a', encoding='utf-8')
         # 读取日志
-        log_file_read = open('/home/pointer-to-bios/danmu.log', mode='r', encoding='utf-8')
+        log_file_read = open(
+            '/home/pointer-to-bios/danmu.log', mode='r', encoding='utf-8')
         self.log = log_file_read.readlines()
 
     def get_danmu(self):
+        global MAX_MSGS
         # 获取直播间弹幕
         while True:
             try:
@@ -81,14 +89,22 @@ class Danmu():
             msg = timeline + ' ' + nickname + ': ' + text
             # 判断对应消息是否存在于日志，如果和最后一条相同则打印并保存
             if msg + '\n' not in self.log:
-                # 显示消息(msg)
-                # 在此插入显示消息代码
-                process = proc.Process(target=damuku, args=(msg,))
-                process.start()
                 # 保存日志
                 self.log_file_write.write(msg + '\n')
                 # 添加到日志列表
                 self.log.append(msg + '\n')
+                # 显示消息(msg)
+                # 在此插入显示消息代码
+                process = proc.Process(target=damuku, args=(msg,))
+                for i in range(msgcount.value):
+                    sigs[i] = True
+                for i in range(msgcount.value):
+                    while sigs[i]:
+                        pass
+                msgcount.value += 1
+                if msgcount.value > MAX_MSGS:
+                    msgcount.value = MAX_MSGS
+                process.start()
             # 清空变量缓存
             nickname = ''
             text = ''
@@ -114,11 +130,11 @@ class BilibiliThread(threading.Thread):
         global running
         while running:
             bilibili(self.room_id)
-            time.sleep(0.5)
+            time.sleep(0.01)
 
 
 if __name__ == "__main__":
-    posrec = proc.Array('i', [False for _ in range(int(900 / 40))])
-    lock = proc.Value('d', False)
+    msgcount = proc.Value('i', 0)
+    sigs = proc.Array('i', [0 for _ in range(MAX_MSGS)])
     thr = BilibiliThread(room_id)
     thr.start()
